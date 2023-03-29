@@ -1,6 +1,14 @@
-# This Puppet manifest installs puppet-lint
+package { 'python3-pip':
+  ensure => installed,
+}
 
-package { 'puppet-lint':
-  ensure   => '2.1.1',
-  provider => 'gem',
+exec { 'install-flask':
+  command => '/usr/bin/pip3 install flask==2.1.0',
+  path    => ['/usr/bin', '/usr/local/bin'],
+  creates => '/usr/local/lib/python3.8/dist-packages/flask',
+}
+
+file { '/usr/bin/flask':
+  ensure => link,
+  target => '/usr/local/bin/flask',
 }
