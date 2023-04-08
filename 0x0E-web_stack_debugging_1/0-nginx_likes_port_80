@@ -1,4 +1,25 @@
 #!/usr/bin/env bash
-# Open the 80 port
-sed -i 's/8080/80/g' /etc/nginx/sites-enabled/default
+# Configure Nginx to listen on port 80
+
+# Check if Nginx is running
+service nginx status > /dev/null 2>&1
+if [ $? -eq 1 ]
+then
+    # Nginx is not running, start it
+    service nginx start
+fi
+
+# Check for errors in configuration file
+nginx -t > /dev/null 2>&1
+if [ $? -ne 0 ]
+then
+    # There are errors in the configuration file, exit
+    echo "There are errors in the configuration file. Please fix them before running this script."
+    exit 1
+fi
+
+# Add listen 80 to server block in configuration file
+sed -i '/server {/a\    listen 80;' /etc/nginx/sites-available/default
+
+# Restart Nginx
 service nginx restart
